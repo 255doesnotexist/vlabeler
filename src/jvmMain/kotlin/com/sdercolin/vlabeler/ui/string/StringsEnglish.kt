@@ -262,11 +262,20 @@ fun Strings.en(): String = when (this) {
     FailedToLoadSampleFileError -> "Could not load the sample file.\nIt may not exist or is not a supported format."
     PluginRuntimeUnexpectedException ->
         "An unexpected error occurred during the plugin execution.\n" +
-            "Please contact the author for more information."
+            "Please contact the author with the error log for more information."
+    FailedToCreateProjectException ->
+        "Failed to create the project." +
+            "Please check the settings of the labeler/plugin to ensure you have set it up correctly.\n" +
+            "If the problem still occurs, please contact the author of the labeler/plugin with the error log " +
+            "for more information."
     InvalidCreatedProjectException ->
         "The created project is not valid. " +
             "Please check the settings of the labeler/plugin to ensure you have set it up correctly.\n" +
-            "If the problem still occurs, please contact the author of the labeler/plugin for more information."
+            "If the problem still occurs, please contact the author of the labeler/plugin with the error log " +
+            "for more information."
+    FailedToCreateProjectNoSampleException ->
+        "Failed to create the project because no sample file was found in the sample directory set in the Directory " +
+            "Settings."
     InvalidOpenedProjectException ->
         "Could not open the project because it contains invalid data.\n" +
             "Please check the error log for more information."
@@ -289,7 +298,7 @@ fun Strings.en(): String = when (this) {
     PropertySetterRuntimeExceptionTemplate -> "Labeler runtime error when setting property: %s"
     PropertySetterUnexpectedRuntimeException ->
         "An unexpected error occurred when setting property.\n" +
-            "Please contact the author of the labeler for more information."
+            "Please contact the author of the labeler with the error log for more information."
     VideoComponentInitializationException ->
         "Could not initialize the video component. You need to install VLC on your device to use this feature. " +
             "Please read the `Video integration` section in README for details."

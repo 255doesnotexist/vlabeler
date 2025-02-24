@@ -259,11 +259,16 @@ fun Strings.ko(): String? = when (this) {
     FailedToLoadSampleFileError -> "샘플 파일을 불러오지 못했습니다.\n존재하지 않는 파일이거나 지원되지 않는 형식일 수 있습니다."
     PluginRuntimeUnexpectedException ->
         "플러그인 실행 도중 예상치 못한 오류가 발생했어요.\n" +
-            "자세한 내용은 플러그인 제작자에게 문의해 확인해 주세요."
+            "자세한 내용은 오류 로그를 함께 첨부하여 플러그인 제작자에게 문의해 주세요."
+    FailedToCreateProjectException ->
+        "프로젝트 생성에 실패했어요." +
+            "라벨러나 플러그인의 설정이 올바르게 되어 있는지 확인해 주세요. \n" +
+            "문제가 지속된다면, 오류 로그를 함께 첨부하여 해당 라벨러나 플러그인의 제작자에게 문의해 주세요."
     InvalidCreatedProjectException ->
         "생성된 프로젝트가 유효하지 않아요. " +
             "라벨러나 플러그인의 설정이 올바르게 되어 있는지 확인해 주세요. \n" +
-            "문제가 지속된다면, 해당 라벨러나 플러그인의 제작자에게 문의해 주세요."
+            "문제가 지속된다면, 오류 로그를 함께 첨부하여 해당 라벨러나 플러그인의 제작자에게 문의해 주세요."
+    FailedToCreateProjectNoSampleException -> "샘플 폴더에 샘플 파일이 없어요. 샘플 폴더를 확인해 주세요."
     InvalidOpenedProjectException ->
         "프로젝트를 열지 못했어요. 올바르지 않은 데이터가 포함되어 있는 것 같아요.\n" +
             "자세한 내용은 에러 로그를 통해 확인해 주세요."
@@ -286,7 +291,7 @@ fun Strings.ko(): String? = when (this) {
     PropertySetterRuntimeExceptionTemplate -> "항목 설정 도중 라벨러 런타임 오류: %s"
     PropertySetterUnexpectedRuntimeException ->
         "항목을 설정하는 도중 예상치 못한 오류가 발생했어요.\n" +
-            "자세한 내용은 라벨러 제작자에게 문의해 확인해 주세요."
+            "자세한 내용은 오류 로그를 함께 첨부하여 라벨러 제작자에게 문의해 주세요."
     VideoComponentInitializationException ->
         "영상 요소를 초기화하지 못했어요. 이 기능을 사용하려면 기기에 VLC가 설치되어 있어야 해요. " +
             "README의 `비디오 통합` 부분을 확인해 주세요."

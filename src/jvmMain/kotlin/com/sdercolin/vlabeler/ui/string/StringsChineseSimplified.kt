@@ -244,9 +244,13 @@ fun Strings.zhHans(): String? = when (this) {
         "用于组合上述筛选条件的逻辑表达式。\n可用的记号有：`and`，`or`，`not`，`xor`，`(`，`)`，`#1`，`#2`，等等。"
     EditorSubTitleMultiple -> "编辑采样 %2\$s 中的%1\$d个条目"
     FailedToLoadSampleFileError -> "无法读取该采样文件。它可能不存在，或是不支持的格式。"
-    PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请联系插件作者以获取更多信息。"
+    PluginRuntimeUnexpectedException -> "插件执行过程中发生了意外的错误。请附带错误日志联系插件作者以获取更多信息。"
+    FailedToCreateProjectException ->
+        "无法创建项目。请检查您正在使用的标注器或插件的设置。如果问题仍然无法解决，请附带错误日志联系标注器或插件的作者以获取更多信息。"
     InvalidCreatedProjectException ->
-        "新建的项目为无效项目。请检查您正在使用的标注器或插件的设置。如果问题仍然无法解决，请联系标注器或插件的作者以获取更多信息。"
+        "新建的项目为无效项目。请检查您正在使用的标注器或插件的设置。" +
+            "如果问题仍然无法解决，请附带错误日志联系标注器或插件的作者以获取更多信息。"
+    FailedToCreateProjectNoSampleException -> "无法创建项目，因为在目录设置中设置的采样目录中未找到任何采样文件。"
     InvalidOpenedProjectException -> "无法打开该项目，因为其中包含无效的数据。详情请查看错误日志。"
     ProjectParseException ->
         "无法打开该项目。它可能已损坏，或者是由一个与当前版本不兼容的 vLabeler 版本创建的。" +
@@ -260,7 +264,7 @@ fun Strings.zhHans(): String? = when (this) {
     ProjectConstructorRuntimeExceptionTemplate -> "构建项目时的标注器运行时错误：%s"
     QuickProjectBuilderRuntimeExceptionTemplate -> "构建快捷编辑项目时的标注器运行时错误：%s"
     PropertySetterRuntimeExceptionTemplate -> "设置属性时的标注器运行时错误：%s"
-    PropertySetterUnexpectedRuntimeException -> "设置属性时发生了意外的错误。请联系标注器作者以获取更多信息。"
+    PropertySetterUnexpectedRuntimeException -> "设置属性时发生了意外的错误。请附带错误日志联系标注器作者以获取更多信息。"
     VideoComponentInitializationException ->
         "无法初始化视频组件。您需要在您的设备上安装 VLC 才能使用此功能。请阅读 README 中的 `集成视频` 部分以获取更多信息。"
     VideoFileNotFoundExceptionTemplate -> "未找到 %s 的同名视频文件（%s）"

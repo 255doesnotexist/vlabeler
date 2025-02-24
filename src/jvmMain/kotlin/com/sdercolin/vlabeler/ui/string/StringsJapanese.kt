@@ -256,10 +256,18 @@ fun Strings.ja(): String? = when (this) {
     EditorSubTitleMultiple -> "サンプル %2\$s の中の%1\$dエントリを編集"
     FailedToLoadSampleFileError ->
         "サンプルファイルを読み込めませんでした。存在しないか、サポートされていないフォーマットの可能性があります。"
-    PluginRuntimeUnexpectedException -> "プラグインの実行中に予期しないエラーが発生しました。プラグインの作者に連絡してください。"
+    PluginRuntimeUnexpectedException ->
+        "プラグインの実行中に予期しないエラーが発生しました。" +
+            "エラーログを添付し、プラグインの作者に連絡してください。"
+    FailedToCreateProjectException ->
+        "プロジェクトを作成できませんでした。お使いのラベラーまたはプラグインの設定を確認してください。" +
+            "問題が解決できない場合は、エラーログを添付し、ラベラーまたはプラグインの作者に連絡してください。"
     InvalidCreatedProjectException ->
         "作成したプロジェクトは無効です。お使いのラベラーまたはプラグインの設定を確認してください。" +
-            "問題が解決できない場合は、ラベラーまたはプラグインの作者に連絡してください。"
+            "問題が解決できない場合は、エラーログを添付し、ラベラーまたはプラグインの作者に連絡してください。"
+    FailedToCreateProjectNoSampleException ->
+        "サンプルディレクトリにサンプルファイルが見つからなかったため、" +
+            "プロジェクトを作成できませんでした。"
     InvalidOpenedProjectException -> "プロジェクトを開けませんでした。無効なデータが含まれています。詳細はエラーログを確認してください。"
     ProjectParseException ->
         "プロジェクトを開けませんでした。破損しているか、互換性のないのバージョンの vLabeler によって作られています。" +
@@ -283,7 +291,7 @@ fun Strings.ja(): String? = when (this) {
     QuickProjectBuilderRuntimeExceptionTemplate -> "クイック編集プロジェクトの作成中にエラーが発生しました：%s"
     PropertySetterRuntimeExceptionTemplate -> "プロパティの設定中にエラーが発生しました：%s"
     PropertySetterUnexpectedRuntimeException ->
-        "プロパティの設定中に予期しないエラーが発生しました。ラベラーの作者に連絡してください。"
+        "プロパティの設定中に予期しないエラーが発生しました。エラーログを添付し、ラベラーの作者に連絡してください。"
     LabelerManagerTitle -> "ラベラー"
     LabelerManagerImportDialogTitle -> "ラベラーをインポート"
     TemplatePluginManagerTitle -> "テンプレート生成器"
