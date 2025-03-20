@@ -49,6 +49,7 @@ import java.io.File
  * @property modules The modules in the project, which contains all actual content.
  * @property currentModuleIndex The index of the current module.
  * @property autoExport Whether to export the project automatically when the project is saved.
+ * @property entryFilter The filter for entries.
  */
 @Serializable
 @Immutable
@@ -71,6 +72,7 @@ data class Project(
     val modules: List<Module>,
     val currentModuleIndex: Int,
     val autoExport: Boolean,
+    val entryFilter: EntryFilter? = null,
 ) {
     val rootSampleDirectory: File
         get() = rootSampleDirectoryPath.toFile()
@@ -117,8 +119,19 @@ data class Project(
         return updateModule(currentModule.name, updater)
     }
 
+    fun applyCurrentEntryFilter(): Project = updateEntryFilter(entryFilter)
+
     fun updateEntryFilter(entryFilter: EntryFilter?): Project {
-        return copy(modules = modules.map { it.copy(entryFilter = entryFilter) })
+        val modules = modules.map {
+            it.copy(
+                filteredEntryIndexes =
+                entryFilter?.getFilteredIndexes(
+                    entries = it.entries,
+                    labelerConf = labelerConf,
+                ) ?: it.entries.indices.toList(),
+            )
+        }
+        return copy(modules = modules, entryFilter = entryFilter)
     }
 
     fun getEntriesForEditing(index: Int? = null) =
@@ -135,8 +148,8 @@ data class Project(
         configs: ReloadLabelConfigs = ReloadLabelConfigs(),
     ): Project {
         val mergedEntries = mergeEntryLists(entries, currentModule.entries, diff, configs)
-        val newModule = currentModule.copy(entries = mergedEntries, currentIndex = 0, entryFilter = null)
-        return copy(modules = modules.map { if (it == currentModule) newModule else it })
+        val newModule = currentModule.copy(entries = mergedEntries, currentIndex = 0)
+        return copy(modules = modules.map { if (it == currentModule) newModule else it }, entryFilter = null)
     }
 
     fun validate() = this.run {
@@ -189,7 +202,7 @@ data class Project(
     }
 
     companion object {
-        const val PROJECT_VERSION = 3
+        const val PROJECT_VERSION = 4
 
         const val PROJECT_FILE_EXTENSION = "lbp"
         private const val DEFAULT_CACHE_DIRECTORY_SUFFIX = ".$PROJECT_FILE_EXTENSION.caches"

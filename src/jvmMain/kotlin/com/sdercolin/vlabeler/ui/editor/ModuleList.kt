@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Module
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.common.NavigatorItemSummary
@@ -32,6 +33,7 @@ class ModuleListState(
         private set
     override var currentIndex = 0
         private set
+    override val labelerConf: LabelerConf = project.labelerConf
 
     var searchText: String by mutableStateOf("")
     override var searchResult: List<IndexedValue<Module>> by mutableStateOf(calculateResult())

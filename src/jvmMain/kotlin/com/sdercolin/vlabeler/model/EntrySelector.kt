@@ -31,6 +31,8 @@ data class EntrySelector(
             return _expression
         }
 
+    fun isEmpty(): Boolean = filters.isEmpty()
+
     fun isValid(labelerConf: LabelerConf): Boolean {
         if (rawExpression != null) {
             if (runCatching { expression }.isFailure) return false

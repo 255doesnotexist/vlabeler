@@ -38,6 +38,7 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.env.isReleased
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
@@ -49,6 +50,8 @@ interface NavigatorListState<T : Any> {
     var selectedIndex: Int?
     var searchResult: List<IndexedValue<T>>
     var hasFocus: Boolean
+
+    val labelerConf: LabelerConf
 
     fun submit(index: Int)
     fun updateProject(project: Project)

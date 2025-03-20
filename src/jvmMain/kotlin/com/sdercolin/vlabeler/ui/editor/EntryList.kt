@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sdercolin.vlabeler.model.AppConf
 import com.sdercolin.vlabeler.model.Entry
+import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppDialogState
 import com.sdercolin.vlabeler.ui.common.DoneIcon
@@ -75,6 +76,7 @@ class EntryListState(
         private set
     override var currentIndex = 0
         private set
+    override val labelerConf: LabelerConf = project.labelerConf
 
     override var searchResult: List<IndexedValue<Entry>> by mutableStateOf(calculateResult())
     override var selectedIndex: Int? by mutableStateOf(null)
@@ -88,7 +90,7 @@ class EntryListState(
         jumpToEntry(index)
     }
 
-    override fun calculateResult(): List<IndexedValue<Entry>> = entries.filter { filterState.filter.matches(it.value) }
+    override fun calculateResult(): List<IndexedValue<Entry>> = filterState.filter.filter(entries, labelerConf)
 
     override fun updateProject(project: Project) {
         entries = project.currentModule.entries.withIndex().toList()
