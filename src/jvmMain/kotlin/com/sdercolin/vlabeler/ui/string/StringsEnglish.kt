@@ -106,6 +106,8 @@ fun Strings.en(): String = when (this) {
     CommonSelect -> "Select"
     CommonOpen -> "Open"
     CommonSave -> "Save"
+    CommonReset -> "Reset"
+    CommonClear -> "Clear"
     CommonInputErrorPromptNumber -> "Please enter a number."
     CommonInputErrorPromptInteger -> "Please enter an integer number."
     CommonInputErrorPromptNumberRange -> "Please enter a number between %s and %s."
@@ -706,6 +708,8 @@ fun Strings.en(): String = when (this) {
     FilterDoneIgnored -> "Not filtered by done"
     FilterLink -> "Toggle to apply the filters to project navigation"
     FilterLinked -> "Filters applied to project navigation"
+    FilterAdvancedInUse -> "Advanced Filters"
+    FilterDisabledDueToAdvancedInUse -> "Disabled because advanced filters are applied"
     ColorPickerDialogTitle -> "vLabeler - Color Picker"
     QuickLaunchManagerDialogTitle -> "Plugin Slots"
     QuickLaunchManagerDialogDescription ->
@@ -760,6 +764,8 @@ fun Strings.en(): String = when (this) {
         "vLabeler is running on Rosetta 2 compatibility mode.\n" +
             "For better performance, please try the build for Apple Silicon (~mac-arm64.dmg)."
     EntryFilterSetterDialogTitle -> "Filter Settings"
+    EntryFilterSetterDialogModeBasic -> "Basic"
+    EntryFilterSetterDialogModeAdvanced -> "Advanced"
     EntryFilterSetterDialogHeaderAny -> "Any text contains"
     EntryFilterSetterDialogHeaderName -> "Entry name contains"
     EntryFilterSetterDialogHeaderSample -> "Sample name contains"

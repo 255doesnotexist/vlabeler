@@ -1,6 +1,7 @@
 package com.sdercolin.vlabeler.ui.editor
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
@@ -64,6 +66,7 @@ import com.sdercolin.vlabeler.ui.dialog.EntryFilterSetterDialogResult
 import com.sdercolin.vlabeler.ui.string.*
 import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.ui.theme.White20
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class EntryListState(
@@ -99,7 +102,11 @@ class EntryListState(
     }
 
     suspend fun editFilterInDialog() {
-        val args = EntryFilterSetterDialogArgs(filterState.filter)
+        val args = EntryFilterSetterDialogArgs(
+            labelerConf = labelerConf,
+            entries = entries.map { it.value },
+            value = filterState.filter,
+        )
         val result = dialogState?.awaitEmbeddedDialog(args) ?: return
         val newValue = (result as? EntryFilterSetterDialogResult)?.value ?: return
         filterState.editFilter { newValue }
@@ -126,6 +133,7 @@ fun EntryList(
         )
     },
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val focusRequester = remember { FocusRequester() }
 
     if (!pinned) LaunchedEffect(Unit) { focusRequester.requestFocus() }
@@ -181,6 +189,39 @@ fun EntryList(
                     }
                 }
             },
+            disabledContent = if (filterState.filter.advanced != null) {
+                {
+                    Row(
+                        Modifier
+                            .background(color = White20, shape = RoundedCornerShape(12.dp))
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                coroutineScope.launch {
+                                    state.editFilterInDialog()
+                                }
+                            }
+                            .padding(horizontal = 8.dp, vertical = 6.dp),
+                    ) {
+                        Text(
+                            text = string(Strings.FilterAdvancedInUse),
+                            color = MaterialTheme.colors.onSurface.copy(0.8f),
+                            style = MaterialTheme.typography.caption,
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        FreeSizedIconButton(
+                            onClick = {
+                                filterState.clear()
+                                state.updateSearch()
+                            },
+                        ) {
+                            val icon = Icons.Default.Close
+                            Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(16.dp))
+                        }
+                    }
+                }
+            } else {
+                null
+            },
         )
         val filterShown = pinned && state.isFilterExpanded
         Divider(
@@ -194,6 +235,7 @@ fun EntryList(
         )
         if (filterShown) {
             FilterRow(
+                coroutineScope = coroutineScope,
                 filterState = filterState as LinkableEntryListFilterState,
                 updateSearch = state::updateSearch,
                 editInDialog = state::editFilterInDialog,
@@ -209,22 +251,28 @@ fun EntryList(
 
 @Composable
 private fun FilterRow(
+    coroutineScope: CoroutineScope,
     filterState: LinkableEntryListFilterState,
     updateSearch: () -> Unit,
     editInDialog: suspend () -> Unit,
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    val isDisabledByAdvancedFilters = filterState.filter.advanced?.isEmpty() == false
     Row(modifier = Modifier.padding(horizontal = 5.dp)) {
         WithTooltip(
             tooltip = string(
-                when (filterState.filter.done) {
-                    true -> Strings.FilterDone
-                    false -> Strings.FilterUndone
-                    null -> Strings.FilterDoneIgnored
+                if (isDisabledByAdvancedFilters) {
+                    Strings.FilterDisabledDueToAdvancedInUse
+                } else {
+                    when (filterState.filter.done) {
+                        true -> Strings.FilterDone
+                        false -> Strings.FilterUndone
+                        null -> Strings.FilterDoneIgnored
+                    }
                 },
             ),
         ) {
             FreeSizedIconButton(
+                enabled = isDisabledByAdvancedFilters.not(),
                 onClick = {
                     filterState.editFilter { doneNexted() }
                     updateSearch()
@@ -236,14 +284,19 @@ private fun FilterRow(
         }
         WithTooltip(
             tooltip = string(
-                when (filterState.filter.star) {
-                    true -> Strings.FilterStarred
-                    false -> Strings.FilterUnstarred
-                    null -> Strings.FilterStarIgnored
+                if (isDisabledByAdvancedFilters) {
+                    Strings.FilterDisabledDueToAdvancedInUse
+                } else {
+                    when (filterState.filter.star) {
+                        true -> Strings.FilterStarred
+                        false -> Strings.FilterUnstarred
+                        null -> Strings.FilterStarIgnored
+                    }
                 },
             ),
         ) {
             FreeSizedIconButton(
+                enabled = isDisabledByAdvancedFilters.not(),
                 onClick = {
                     filterState.editFilter { starNexted() }
                     updateSearch()

@@ -108,6 +108,8 @@ fun Strings.zhHans(): String? = when (this) {
     CommonSelect -> "选择"
     CommonOpen -> "打开"
     CommonSave -> "保存"
+    CommonReset -> "重置"
+    CommonClear -> "清空"
     CommonInputErrorPromptNumber -> "请输入一个数字。"
     CommonInputErrorPromptInteger -> "请输入一个整数。"
     CommonInputErrorPromptNumberRange -> "请输入一个介于 %s 与 %s 之间的数字。"
@@ -632,6 +634,8 @@ fun Strings.zhHans(): String? = when (this) {
     FilterDoneIgnored -> "不筛选完成状态"
     FilterLink -> "将筛选器应用到项目导航"
     FilterLinked -> "筛选器已应用到项目导航"
+    FilterAdvancedInUse -> "高级筛选器已启用"
+    FilterDisabledDueToAdvancedInUse -> "由于高级筛选器已启用，该项目不可用"
     ColorPickerDialogTitle -> "vLabeler - 选色器"
     QuickLaunchManagerDialogTitle -> "插件槽位"
     QuickLaunchManagerDialogDescription ->
@@ -676,6 +680,8 @@ fun Strings.zhHans(): String? = when (this) {
     AppRunningOnCompatibilityModeWarning ->
         "vLabeler 正在运行在 Rosetta 2 兼容模式下。\n为了获得更好的性能，请尝试使用 Apple Silicon 架构的版本（~mac-arm64.dmg）。"
     EntryFilterSetterDialogTitle -> "筛选设置"
+    EntryFilterSetterDialogModeBasic -> "基础"
+    EntryFilterSetterDialogModeAdvanced -> "高级"
     EntryFilterSetterDialogHeaderAny -> "任何文字包含"
     EntryFilterSetterDialogHeaderName -> "条目名包含"
     EntryFilterSetterDialogHeaderSample -> "采样名包含"

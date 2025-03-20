@@ -107,6 +107,8 @@ fun Strings.ko(): String? = when (this) {
     CommonSelect -> "선택"
     CommonOpen -> "열기"
     CommonSave -> "저장"
+    CommonReset -> "초기화"
+    CommonClear -> "지우기"
     CommonInputErrorPromptNumber -> "숫자를 입력해 주세요."
     CommonInputErrorPromptInteger -> "정수값을 입력해 주세요."
     CommonInputErrorPromptNumberRange -> "%s ~ %s 사이의 숫자를 입력해 주세요."
@@ -688,6 +690,8 @@ fun Strings.ko(): String? = when (this) {
     FilterDoneIgnored -> "\"완료\" 필터 미적용"
     FilterLink -> "탐색에 필터 적용"
     FilterLinked -> "탐색에 적용된 필터들"
+    FilterAdvancedInUse -> "고급 필터"
+    FilterDisabledDueToAdvancedInUse -> "고급 필터가 사용되고 있어서 비활성화되었어요"
     ColorPickerDialogTitle -> "vLabeler - 색 팔레트"
     QuickLaunchManagerDialogTitle -> "플러그인 슬롯"
     QuickLaunchManagerDialogDescription ->
@@ -741,6 +745,8 @@ fun Strings.ko(): String? = when (this) {
         "vLabeler가 Rosetta 2 호환 모드로 실행되고 있어요.\n" +
             "더 나은 성능을 위해, 애플 실리콘 (~mac-arm64.dmg) 버전을 다운로드해 사용해 주세요."
     EntryFilterSetterDialogTitle -> "필터 설정"
+    EntryFilterSetterDialogModeBasic -> "기본"
+    EntryFilterSetterDialogModeAdvanced -> "고급"
     EntryFilterSetterDialogHeaderAny -> "다음을 포함하는 모든 텍스트"
     EntryFilterSetterDialogHeaderName -> "다음을 포함하는 엔트리"
     EntryFilterSetterDialogHeaderSample -> "이름에 다음을 포함하는 샘플"

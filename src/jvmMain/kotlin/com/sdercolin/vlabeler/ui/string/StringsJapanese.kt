@@ -108,6 +108,8 @@ fun Strings.ja(): String? = when (this) {
     CommonSelect -> "選択"
     CommonOpen -> "開く"
     CommonSave -> "保存"
+    CommonReset -> "リセット"
+    CommonClear -> "クリア"
     CommonInputErrorPromptNumber -> "数値を入力してください。"
     CommonInputErrorPromptInteger -> "整数を入力してください。"
     CommonInputErrorPromptNumberRange -> "%s から %s の間の数値を入力してください。"
@@ -668,6 +670,8 @@ fun Strings.ja(): String? = when (this) {
     FilterDoneIgnored -> "完了状態でフィルターしない"
     FilterLink -> "フィルターをプロジェクトのナビゲーションにも使う"
     FilterLinked -> "フィルターはプロジェクトのナビゲーションにも使かわれている"
+    FilterAdvancedInUse -> "高度なフィルター"
+    FilterDisabledDueToAdvancedInUse -> "高度なフィルターが使用されているため、無効になります"
     ColorPickerDialogTitle -> "vLabeler - カラーピッカー"
     QuickLaunchManagerDialogTitle -> "プラグインスロット"
     QuickLaunchManagerDialogDescription ->
@@ -717,6 +721,8 @@ fun Strings.ja(): String? = when (this) {
         "vLabeler は Rosetta 2 互換モードで実行されています。\n" +
             "パフォーマンスを向上させるには、Apple Silicon 用のビルド（~mac-arm64.dmg）をお試しください。"
     EntryFilterSetterDialogTitle -> "フィルターの設定"
+    EntryFilterSetterDialogModeBasic -> "基本"
+    EntryFilterSetterDialogModeAdvanced -> "高度"
     EntryFilterSetterDialogHeaderAny -> "任意のテキストに"
     EntryFilterSetterDialogHeaderName -> "エントリ名に"
     EntryFilterSetterDialogHeaderSample -> "サンプル名に"
