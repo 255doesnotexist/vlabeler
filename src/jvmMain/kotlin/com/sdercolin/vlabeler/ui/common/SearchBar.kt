@@ -59,7 +59,7 @@ fun SearchBar(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onSubmit?.invoke() }),
                 enabled = disabledContent == null,
-                readOnly = disabledContent == null,
+                readOnly = disabledContent != null,
             )
             disabledContent?.invoke()
         }
