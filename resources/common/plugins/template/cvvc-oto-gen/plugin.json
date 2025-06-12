@@ -217,15 +217,15 @@
                 "name": "tempoComp",
                 "label": {
                     "en": "Adjust parameters for fast tempo",
-                    "zh": "",
-                    "ja": "",
-                    "ko": ""
+                    "zh": "高速下调整参数",
+                    "ja": "高速テンポでパラメータを調整",
+                    "ko": "빠른 템포에 맞춰 파라미터 조정"
                 },
                 "description": {
                     "en": "Shorten the initial vowel stabilization, consonant length, and VC overlap for fast tempos. \nWARNING: If you disable this option, fast tempos and large parameters may cause rendering errors or crashes when using the voicebank. Please check the OTO very carefully.",
-                    "zh": "",
-                    "ja": "",
-                    "ko": ""
+                    "zh": "在高速下缩短元音固定范围、辅音长度和 VC 重叠。\n警告：如果禁用此选项，则在使用语音库时，高速和大参数可能会导致渲染错误或崩溃。请仔细检查 OTO。",
+                    "ja": "高速テンポで母音固定範囲、子音の長さ、VC オーバーラップを短くします。\n警告：このオプションを無効にすると、高速テンポと大きなパラメータが原因で、ボイスバンク使用時にレンダリングエラーやクラッシュが発生する可能性があります。OTO をよく確認してください。",
+                    "ko": "빠른 템포에 맞춰 모음 고정 범위, 자음 길이, VC 오버랩을 단축해요.\n경고: 이 옵션을 비활성화하면 빠른 템포와 큰 파라미터가 음성 라이브러리 사용 시 렌더링 오류나 충돌을 일으킬 수 있어요. OTO를 매우 주의 깊게 확인해 주세요."
                 },
                 "defaultValue": true
             },
