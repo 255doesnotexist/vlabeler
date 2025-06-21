@@ -24,6 +24,7 @@ if (repeatSuffix.indexOf("{number}") < 0) {
 
 let prefix = params["prefix"]
 let separator = params["separator"]
+let headSeparator = params["headSeparator"]
 let appendSuffix = params["appendSuffix"]
 let suffixes = params["suffixes"].split(',')
 if (!suffixes.includes(appendSuffix)) {
@@ -155,12 +156,12 @@ function getAliasWithCount(alias, isOther, isSingleC) {
     return thisAlias
 }
 
-function pushHeadCV(sample, alias, nextHasConsonant) {
+function pushHeadCV(sample, index, alias, nextHasConsonant) {
     let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset - consLength - 10
-    let ovl = offset - consLength
-    let preu = offset
+    let start = offset + index * beatLength - consLength - 10
+    let ovl = start + 10
+    let preu = start
     let fixed = preu + fixBuffer
     let cutoff = 0 - (10 + consLength + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
 
@@ -175,12 +176,12 @@ function pushHeadCV(sample, alias, nextHasConsonant) {
     push(entry, "CV")
 }
 
-function pushHeadV(sample, alias, nextHasConsonant) {
+function pushHeadV(sample, index, alias, nextHasConsonant) {
     let thisAlias = getAliasWithCount(alias, false, false)
 
-    let start = offset - 20
-    let ovl = offset - 10
-    let preu = offset
+    let start = offset + index * beatLength - 20
+    let ovl = start + 10
+    let preu = start
     let fixed = preu + fixBuffer
     let cutoff = 0 - (20 + beatLength - ovlVC - (nextHasConsonant ? consLength : 0))
 
@@ -370,6 +371,9 @@ function parseSample(sample) {
     }
 
     while (rest !== "") {
+        if (debug) {
+            console.log("New iteration with rest: " + rest + ", Last Vowel: " + lastVowel + ", Index: " + index)
+        }
         let matched = symbols.find(text => rest.startsWith(text))
         if (matched === undefined) {
             // handle suffix
@@ -385,10 +389,19 @@ function parseSample(sample) {
 
         let nextHasConsonant = false
         let next = rest.slice(matched.length)
-        if (separator !== "" && next.startsWith(separator)) {
+        let isHeadSeparatorMatched = false
+        if (headSeparator !== "" && next.startsWith(headSeparator)) {
+            isHeadSeparatorMatched = true
+            if (debug) {
+                console.log("Head separator matched")
+            }
+        } else if (separator !== "" && next.startsWith(separator)) {
             next = next.slice(separator.length)
         }
         let nextMatched = symbols.find(text => next.startsWith(text))
+        if (debug) {
+            console.log(`Matched: ${matched}, Next: ${nextMatched}, Last Vowel: ${lastVowel}`)
+        }
         if (nextMatched !== undefined) {
             let nextCons = symbolPhonemeMap.get(nextMatched)[0]
             if (nextCons) {
@@ -406,12 +419,12 @@ function parseSample(sample) {
             pushSoloC(sample, index, consonant)
         }
 
-        if (index === 0) {
+        if (lastVowel === "") {
             let aliasHeadCV = "- " + matched
             if (consonant === "") {
-                pushHeadV(sample, aliasHeadCV, nextHasConsonant)
+                pushHeadV(sample, index, aliasHeadCV, nextHasConsonant)
             } else if (useHeadCV) {
-                pushHeadCV(sample, aliasHeadCV, nextHasConsonant)
+                pushHeadCV(sample, index, aliasHeadCV, nextHasConsonant)
             }
         }
 
@@ -425,7 +438,7 @@ function parseSample(sample) {
         }
 
         if (consonant !== "") {
-            if (index === 0) {
+            if (lastVowel === "") {
                 if (!useHeadCV) {
                     pushCV(sample, index, matched, nextHasConsonant)
                 }
@@ -439,6 +452,10 @@ function parseSample(sample) {
         index++
         lastVowel = vowel
         rest = rest.slice(matched.length)
+        if (isHeadSeparatorMatched) {
+            rest = rest.slice(headSeparator.length)
+            lastVowel = ""
+        }
         if (separator !== "" && rest.startsWith(separator)) {
             rest = rest.slice(separator.length)
         }
