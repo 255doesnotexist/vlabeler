@@ -64,7 +64,7 @@ import com.sdercolin.vlabeler.ui.common.ExtraIcon
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.StarIcon
 import com.sdercolin.vlabeler.ui.common.WithContextMenu
-import com.sdercolin.vlabeler.ui.editor.EditorContextAction
+import com.sdercolin.vlabeler.ui.editor.EditorEntryContextAction
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
@@ -128,7 +128,7 @@ fun Labeler(
             entryHasExtra = appState.canEditCurrentEntryExtra,
             editEntryExtra = { editorState.editEntryExtra(editorState.project.currentModule.currentIndex) },
             handleContextAction = {
-                editorState.consumeEditorContextAction(it)
+                editorState.consumeEditorEntryContextAction(it)
             },
         )
         if (appState.isTimescaleBarDisplayed) {
@@ -268,7 +268,7 @@ private fun EntryTitleBar(
     tagOptions: List<String>,
     entryHasExtra: Boolean,
     editEntryExtra: () -> Unit,
-    handleContextAction: (EditorContextAction) -> Unit,
+    handleContextAction: (EditorEntryContextAction) -> Unit,
 ) {
     Surface {
         Box(
@@ -283,11 +283,12 @@ private fun EntryTitleBar(
                         items = {
                             remember(index, title, multiple) {
                                 listOfNotNull(
-                                    EditorContextAction.CopyEntryName(title),
-                                    EditorContextAction.OpenRenameEntryDialog(index),
-                                    EditorContextAction.OpenDuplicateEntryDialog(index),
-                                    EditorContextAction.OpenRemoveEntryDialog(index),
-                                    EditorContextAction.OpenMoveEntryDialog(index).takeUnless { multiple },
+                                    EditorEntryContextAction.CopyEntryName(title),
+                                    EditorEntryContextAction.OpenRenameEntryDialog(index),
+                                    EditorEntryContextAction.OpenDuplicateEntryDialog(index),
+                                    EditorEntryContextAction.OpenRemoveEntryDialog(index),
+                                    EditorEntryContextAction.OpenMoveEntryDialog(index).takeUnless { multiple },
+                                    EditorEntryContextAction.FilterByEntryName(title).takeIf { multiple },
                                 )
                             }
                         },
@@ -296,7 +297,7 @@ private fun EntryTitleBar(
                         Text(
                             modifier = Modifier.align(Alignment.Bottom)
                                 .clickable {
-                                    handleContextAction(EditorContextAction.OpenRenameEntryDialog(index))
+                                    handleContextAction(EditorEntryContextAction.OpenRenameEntryDialog(index))
                                 },
                             text = title,
                             style = MaterialTheme.typography.h3,
@@ -310,8 +311,8 @@ private fun EntryTitleBar(
                             items = {
                                 remember(subTitle, multiple) {
                                     listOfNotNull(
-                                        EditorContextAction.CopySampleName(subTitle).takeUnless { multiple },
-                                        EditorContextAction.FilterBySampleName(subTitle).takeUnless { multiple },
+                                        EditorEntryContextAction.CopySampleName(subTitle),
+                                        EditorEntryContextAction.FilterBySampleName(subTitle).takeUnless { multiple },
                                     )
                                 }
                             },
@@ -338,8 +339,8 @@ private fun EntryTitleBar(
                             WithContextMenu(
                                 items = {
                                     remember(tag) {
-                                        listOfNotNull(
-                                            EditorContextAction.FilterByTag(tag),
+                                        listOf(
+                                            EditorEntryContextAction.FilterByTag(tag),
                                         )
                                     }
                                 },
@@ -359,8 +360,8 @@ private fun EntryTitleBar(
                                 items = {
                                     remember {
                                         listOf(
-                                            EditorContextAction.FilterDone(),
-                                            EditorContextAction.FilterUndone(),
+                                            EditorEntryContextAction.FilterDone(),
+                                            EditorEntryContextAction.FilterUndone(),
                                         )
                                     }
                                 },
@@ -379,8 +380,8 @@ private fun EntryTitleBar(
                                 items = {
                                     remember {
                                         listOf(
-                                            EditorContextAction.FilterStarred(),
-                                            EditorContextAction.FilterUnstarred(),
+                                            EditorEntryContextAction.FilterStarred(),
+                                            EditorEntryContextAction.FilterUnstarred(),
                                         )
                                     }
                                 },

@@ -759,6 +759,7 @@ fun Strings.ja(): String? = when (this) {
     EditorContextActionOpenRemoveEntryDialog -> "エントリを削除..."
     EditorContextActionOpenMoveEntryDialog -> "エントリを移動..."
     EditorContextActionCopyEntryName -> "エントリ名をクリップボードにコピー"
+    EditorContextActionFilterByEntryName -> "エントリ名でフィルター"
     EditorContextActionCopySampleName -> "サンプル名をクリップボードにコピー"
     EditorContextActionFilterBySampleName -> "サンプル名でフィルター"
     EditorContextActionFilterByTag -> "タグでフィルター"

@@ -779,6 +779,7 @@ fun Strings.ko(): String? = when (this) {
     EditorContextActionOpenRemoveEntryDialog -> "항목 제거..."
     EditorContextActionOpenMoveEntryDialog -> "항목 이동 대상 선택..."
     EditorContextActionCopyEntryName -> "항목 이름을 클립보드에 복사"
+    EditorContextActionFilterByEntryName -> "항목 이름으로 필터"
     EditorContextActionCopySampleName -> "샘플 이름을 클립보드에 복사"
     EditorContextActionFilterBySampleName -> "샘플 이름으로 필터"
     EditorContextActionFilterByTag -> "태그 값으로 필터"

@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import com.sdercolin.vlabeler.model.Entry
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.AppDialogState
+import com.sdercolin.vlabeler.ui.common.ContextMenuSubject
 import com.sdercolin.vlabeler.ui.common.DoneIcon
 import com.sdercolin.vlabeler.ui.common.DoneTriStateIcon
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
@@ -69,12 +71,43 @@ import com.sdercolin.vlabeler.ui.theme.White20
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@Stable
+class EntryListStateItem(
+    override val index: Int,
+    val entry: Entry,
+    val isMultipleEditMode: Boolean,
+    val viewConf: AppConf.View,
+    val enableContextMenu: Boolean,
+) :
+    ContextMenuSubject<EditorEntryContextAction> {
+    @Composable
+    override fun getContextMenuActions(): List<EditorEntryContextAction> = if (enableContextMenu) {
+        listOfNotNull(
+            EditorEntryContextAction.CopyEntryName(entry.name),
+            EditorEntryContextAction.CopySampleName(entry.getDisplayedSampleName(viewConf)),
+            EditorEntryContextAction.OpenRenameEntryDialog(index),
+            EditorEntryContextAction.OpenDuplicateEntryDialog(index),
+            EditorEntryContextAction.OpenRemoveEntryDialog(index),
+            EditorEntryContextAction.OpenMoveEntryDialog(index).takeUnless { isMultipleEditMode },
+            EditorEntryContextAction.FilterByEntryName(entry.name).takeIf { isMultipleEditMode },
+            EditorEntryContextAction.FilterBySampleName(entry.getDisplayedSampleName(viewConf))
+                .takeUnless { isMultipleEditMode },
+            EditorEntryContextAction.FilterByTag(entry.notes.tag),
+        )
+    } else {
+        emptyList()
+    }
+}
+
 class EntryListState(
+    private val viewConf: AppConf.View,
     private val filterState: EntryListFilterState,
     project: Project,
     private val jumpToEntry: (Int) -> Unit,
     private val dialogState: AppDialogState?,
-) : NavigatorListState<Entry> {
+    private val enableContextMenu: Boolean,
+) : NavigatorListState<EntryListStateItem, EditorEntryContextAction> {
+    private var isMultipleEditMode = project.multipleEditMode
     var entries = project.currentModule.entries.withIndex().toList()
         private set
     override var currentIndex = 0
@@ -83,7 +116,7 @@ class EntryListState(
 
     private val initialResult = calculateResult()
     override var isFiltered: Boolean by mutableStateOf(initialResult.first)
-    override var searchResult: List<IndexedValue<Entry>> by mutableStateOf(initialResult.second)
+    override var searchResult: List<EntryListStateItem> by mutableStateOf(initialResult.second)
     override var selectedIndex: Int? by mutableStateOf(null)
 
     override var hasFocus: Boolean by mutableStateOf(false)
@@ -95,10 +128,21 @@ class EntryListState(
         jumpToEntry(index)
     }
 
-    override fun calculateResult(): Pair<Boolean, List<IndexedValue<Entry>>> =
-        filterState.filter.isEmpty().not() to filterState.filter.filter(entries, labelerConf)
+    override fun calculateResult(): Pair<Boolean, List<EntryListStateItem>> {
+        val filteredEntries = filterState.filter.filter(entries, labelerConf)
+        return filterState.filter.isEmpty().not() to filteredEntries.map {
+            EntryListStateItem(
+                viewConf = viewConf,
+                index = it.index,
+                entry = it.value,
+                isMultipleEditMode = isMultipleEditMode,
+                enableContextMenu = enableContextMenu,
+            )
+        }
+    }
 
     override fun updateProject(project: Project) {
+        isMultipleEditMode = project.multipleEditMode
         entries = project.currentModule.entries.withIndex().toList()
         currentIndex = project.currentModule.currentIndex
         if (filterState.filter.star != null || filterState.filter.done != null) {
@@ -130,12 +174,15 @@ fun EntryList(
     jumpToEntry: (Int) -> Unit,
     onFocusedChanged: (Boolean) -> Unit,
     dialogState: AppDialogState?,
+    consumeEditorEntryContextAction: ((EditorEntryContextAction) -> Unit)?,
     state: EntryListState = remember(editorConf, filterState, jumpToEntry) {
         EntryListState(
-            filterState,
-            project,
-            jumpToEntry,
-            dialogState,
+            viewConf = viewConf,
+            filterState = filterState,
+            project = project,
+            jumpToEntry = jumpToEntry,
+            dialogState = dialogState,
+            enableContextMenu = consumeEditorEntryContextAction != null,
         )
     },
 ) {
@@ -250,6 +297,7 @@ fun EntryList(
         NavigatorListBody(
             state = state,
             itemContent = { ItemContent(editorConf, viewConf, it) },
+            contextMenuActionConsumer = consumeEditorEntryContextAction,
         )
     }
 }
@@ -366,16 +414,19 @@ private fun FilterRow(
 }
 
 @Composable
-private fun ItemContent(editorConf: AppConf.Editor, viewConf: AppConf.View, item: IndexedValue<Entry>) {
+private fun ItemContent(editorConf: AppConf.Editor, viewConf: AppConf.View, item: EntryListStateItem) {
     Layout(
         content = {
             NavigatorListItemNumber(item.index)
-            NavigatorItemSummary(item.value.name, item.value.sample, viewConf.hideSampleExtension, isEntry = true)
+            NavigatorItemSummary(
+                name = item.entry.name,
+                subtext = item.entry.getDisplayedSampleName(viewConf),
+            )
             Row {
-                if (item.value.notes.tag.isNotEmpty() && editorConf.showTag) {
+                if (item.entry.notes.tag.isNotEmpty() && editorConf.showTag) {
                     Spacer(modifier = Modifier.width(12.dp))
                     BasicText(
-                        text = item.value.notes.tag,
+                        text = item.entry.notes.tag,
                         modifier = Modifier
                             .offset(y = 1.dp)
                             .background(color = White20, shape = RoundedCornerShape(5.dp))
@@ -391,10 +442,10 @@ private fun ItemContent(editorConf: AppConf.Editor, viewConf: AppConf.View, item
                 modifier = Modifier.padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                if (item.value.notes.done && editorConf.showDone) {
+                if (item.entry.notes.done && editorConf.showDone) {
                     DoneIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
-                if (item.value.notes.star && editorConf.showStar) {
+                if (item.entry.notes.star && editorConf.showStar) {
                     StarIcon(true, modifier = Modifier.requiredSize(16.dp))
                 }
             }

@@ -712,6 +712,7 @@ fun Strings.zhHans(): String? = when (this) {
     EditorContextActionOpenRemoveEntryDialog -> "删除条目..."
     EditorContextActionOpenMoveEntryDialog -> "移动条目..."
     EditorContextActionCopyEntryName -> "复制条目名到剪贴板"
+    EditorContextActionFilterByEntryName -> "以此条目名筛选条目"
     EditorContextActionCopySampleName -> "复制采样名到剪贴板"
     EditorContextActionFilterBySampleName -> "以此采样名筛选条目"
     EditorContextActionFilterByTag -> "以此标签筛选条目"

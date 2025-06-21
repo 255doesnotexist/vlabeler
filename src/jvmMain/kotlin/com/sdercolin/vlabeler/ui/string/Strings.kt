@@ -645,6 +645,7 @@ enum class Strings {
     EditorContextActionOpenRemoveEntryDialog,
     EditorContextActionOpenMoveEntryDialog,
     EditorContextActionCopyEntryName,
+    EditorContextActionFilterByEntryName,
     EditorContextActionCopySampleName,
     EditorContextActionFilterBySampleName,
     EditorContextActionFilterByTag,

@@ -8,3 +8,7 @@ interface ContextMenuAction<T : ContextMenuAction<T>> {
     @Composable
     fun toContextMenuItem(onClick: (T) -> Unit): ContextMenuItem
 }
+
+interface NoOpContextMenuAction : ContextMenuAction<NoOpContextMenuAction> {
+    // for cases where no context menu is needed
+}

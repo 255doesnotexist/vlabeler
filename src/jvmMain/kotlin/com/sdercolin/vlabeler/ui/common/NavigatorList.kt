@@ -44,19 +44,19 @@ import com.sdercolin.vlabeler.ui.theme.LightGray
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
 import com.sdercolin.vlabeler.util.runIf
 
-interface NavigatorListState<T : Any> {
+interface NavigatorListState<S : ContextMenuSubject<A>, A : ContextMenuAction<A>> {
 
     val currentIndex: Int
     var selectedIndex: Int?
     var isFiltered: Boolean
-    var searchResult: List<IndexedValue<T>>
+    var searchResult: List<S>
     var hasFocus: Boolean
 
     val labelerConf: LabelerConf
 
     fun submit(index: Int)
     fun updateProject(project: Project)
-    fun calculateResult(): Pair<Boolean, List<IndexedValue<T>>>
+    fun calculateResult(): Pair<Boolean, List<S>>
     fun updateSearch() {
         val (active, newResults) = calculateResult()
         searchResult = newResults
@@ -74,7 +74,9 @@ interface NavigatorListState<T : Any> {
     }
 }
 
-fun <T : Any> NavigatorListState<T>.onPreviewKeyEvent(event: KeyEvent): Boolean {
+fun <S : ContextMenuSubject<A>, A : ContextMenuAction<A>> NavigatorListState<S, A>.onPreviewKeyEvent(
+    event: KeyEvent,
+): Boolean {
     if (searchResult.isEmpty()) return false
     val index = selectedIndex ?: return false
     return when {
@@ -91,9 +93,10 @@ fun <T : Any> NavigatorListState<T>.onPreviewKeyEvent(event: KeyEvent): Boolean 
 }
 
 @Composable
-fun <T : Any> ColumnScope.NavigatorListBody(
-    state: NavigatorListState<T>,
-    itemContent: @Composable RowScope.(item: IndexedValue<T>) -> Unit,
+fun <S : ContextMenuSubject<A>, A : ContextMenuAction<A>> ColumnScope.NavigatorListBody(
+    state: NavigatorListState<S, A>,
+    itemContent: @Composable RowScope.(item: S) -> Unit,
+    contextMenuActionConsumer: ((A) -> Unit)?,
 ) {
     var pressedIndex by remember { mutableStateOf<Int?>(null) }
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = state.currentIndex)
@@ -112,34 +115,36 @@ fun <T : Any> ColumnScope.NavigatorListBody(
     ) {
         LazyColumn(state = scrollState) {
             itemsIndexed(state.searchResult) { index, item ->
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .height(30.dp)
-                        .runIf(index == state.selectedIndex) {
-                            background(color = MaterialTheme.colors.primaryVariant)
-                        }
-                        .padding(end = 20.dp)
-                        .onPointerEvent(PointerEventType.Press) {
-                            if (it.buttons.isPrimaryPressed.not() || it.buttons.isSecondaryPressed) {
-                                return@onPointerEvent
+                WithContextMenu(items = { item.getContextMenuActions() }, consumer = contextMenuActionConsumer) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .height(30.dp)
+                            .runIf(index == state.selectedIndex) {
+                                background(color = MaterialTheme.colors.primaryVariant)
                             }
-                            pressedIndex = index
-                            state.selectedIndex = index
-                        }
-                        .onPointerEvent(PointerEventType.Exit) {
-                            if (it.buttons.isPrimaryPressed.not()) return@onPointerEvent
-                            if (pressedIndex == index) {
-                                pressedIndex = null
+                            .padding(end = 20.dp)
+                            .onPointerEvent(PointerEventType.Press) {
+                                if (it.buttons.isPrimaryPressed.not() || it.buttons.isSecondaryPressed) {
+                                    return@onPointerEvent
+                                }
+                                pressedIndex = index
+                                state.selectedIndex = index
                             }
-                        }
-                        .onPointerEvent(PointerEventType.Release) {
-                            if (pressedIndex == index) {
-                                state.submit(state.searchResult[index].index)
+                            .onPointerEvent(PointerEventType.Exit) {
+                                if (it.buttons.isPrimaryPressed.not()) return@onPointerEvent
+                                if (pressedIndex == index) {
+                                    pressedIndex = null
+                                }
                             }
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    itemContent(item)
+                            .onPointerEvent(PointerEventType.Release) {
+                                if (pressedIndex == index) {
+                                    state.submit(state.searchResult[index].index)
+                                }
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        itemContent(item)
+                    }
                 }
             }
         }
@@ -161,7 +166,7 @@ fun NavigatorListItemNumber(index: Int) {
 }
 
 @Composable
-fun NavigatorItemSummary(name: String, subtext: String, hideSampleExtension: Boolean, isEntry: Boolean = false) {
+fun NavigatorItemSummary(name: String, subtext: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         BasicText(
             text = name,
@@ -170,9 +175,7 @@ fun NavigatorItemSummary(name: String, subtext: String, hideSampleExtension: Boo
             style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground),
         )
         BasicText(
-            text = subtext.runIf(isEntry && hideSampleExtension) {
-                substringBeforeLast('.')
-            },
+            text = subtext,
             modifier = Modifier.padding(start = 10.dp, top = 3.dp),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,

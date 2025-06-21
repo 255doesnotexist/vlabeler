@@ -5,74 +5,79 @@ import androidx.compose.runtime.Composable
 import com.sdercolin.vlabeler.ui.common.ContextMenuAction
 import com.sdercolin.vlabeler.ui.string.*
 
-sealed interface EditorContextAction : ContextMenuAction<EditorContextAction> {
+sealed interface EditorEntryContextAction : ContextMenuAction<EditorEntryContextAction> {
 
     val text: Strings
 
     @Composable
-    override fun toContextMenuItem(onClick: (EditorContextAction) -> Unit): ContextMenuItem {
+    override fun toContextMenuItem(onClick: (EditorEntryContextAction) -> Unit): ContextMenuItem {
         return ContextMenuItem(
             label = string(text),
             onClick = { onClick(this) },
         )
     }
 
-    class OpenRenameEntryDialog(val entryIndex: Int) : EditorContextAction {
+    class OpenRenameEntryDialog(val entryIndex: Int) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionOpenRenameEntryDialog
     }
 
-    class OpenDuplicateEntryDialog(val entryIndex: Int) : EditorContextAction {
+    class OpenDuplicateEntryDialog(val entryIndex: Int) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionOpenDuplicateEntryDialog
     }
 
-    class OpenRemoveEntryDialog(val entryIndex: Int) : EditorContextAction {
+    class OpenRemoveEntryDialog(val entryIndex: Int) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionOpenRemoveEntryDialog
     }
 
-    class OpenMoveEntryDialog(val entryIndex: Int) : EditorContextAction {
+    class OpenMoveEntryDialog(val entryIndex: Int) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionOpenMoveEntryDialog
     }
 
-    class CopyEntryName(val entryName: String) : EditorContextAction {
+    class CopyEntryName(val entryName: String) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionCopyEntryName
     }
 
-    class CopySampleName(val sampleName: String) : EditorContextAction {
+    class FilterByEntryName(val entryName: String) : EditorEntryContextAction {
+        override val text: Strings
+            get() = Strings.EditorContextActionFilterByEntryName
+    }
+
+    class CopySampleName(val sampleName: String) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionCopySampleName
     }
 
-    class FilterBySampleName(val sampleName: String) : EditorContextAction {
+    class FilterBySampleName(val sampleName: String) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionFilterBySampleName
     }
 
-    class FilterByTag(val tag: String) : EditorContextAction {
+    class FilterByTag(val tag: String) : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionFilterByTag
     }
 
-    class FilterStarred : EditorContextAction {
+    class FilterStarred : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionFilterStarred
     }
 
-    class FilterUnstarred : EditorContextAction {
+    class FilterUnstarred : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionFilterUnstarred
     }
 
-    class FilterDone : EditorContextAction {
+    class FilterDone : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionFilterDone
     }
 
-    class FilterUndone : EditorContextAction {
+    class FilterUndone : EditorEntryContextAction {
         override val text: Strings
             get() = Strings.EditorContextActionFilterUndone
     }

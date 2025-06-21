@@ -802,6 +802,7 @@ fun Strings.en(): String = when (this) {
     EditorContextActionOpenRemoveEntryDialog -> "Remove Entry..."
     EditorContextActionOpenMoveEntryDialog -> "Move Entry to..."
     EditorContextActionCopyEntryName -> "Copy Entry Name to Clipboard"
+    EditorContextActionFilterByEntryName -> "Filter by Entry Name"
     EditorContextActionCopySampleName -> "Copy Sample Name to Clipboard"
     EditorContextActionFilterBySampleName -> "Filter by Sample Name"
     EditorContextActionFilterByTag -> "Filter by Tag"
