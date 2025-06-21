@@ -729,7 +729,11 @@ private fun ParamFileTextField(
             isError = isError,
             enabled = enabled,
             trailingIcon = {
-                IconButton(onClick = { isShowingFilePicker = true }, enabled = enabled) {
+                IconButton(
+                    modifier = Modifier.padding(end = 4.dp),
+                    onClick = { isShowingFilePicker = true },
+                    enabled = enabled,
+                ) {
                     Icon(Icons.Default.FolderOpen, null)
                 }
             },
@@ -810,7 +814,11 @@ private fun ParamRawFileTextField(
             isError = isError,
             enabled = enabled,
             trailingIcon = {
-                IconButton(onClick = { isShowingFilePicker = true }, enabled = enabled) {
+                IconButton(
+                    modifier = Modifier.padding(end = 4.dp),
+                    onClick = { isShowingFilePicker = true },
+                    enabled = enabled,
+                ) {
                     Icon(Icons.Default.FolderOpen, null)
                 }
             },
