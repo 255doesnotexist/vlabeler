@@ -81,7 +81,9 @@ class EntryListState(
         private set
     override val labelerConf: LabelerConf = project.labelerConf
 
-    override var searchResult: List<IndexedValue<Entry>> by mutableStateOf(calculateResult())
+    private val initialResult = calculateResult()
+    override var isFiltered: Boolean by mutableStateOf(initialResult.first)
+    override var searchResult: List<IndexedValue<Entry>> by mutableStateOf(initialResult.second)
     override var selectedIndex: Int? by mutableStateOf(null)
 
     override var hasFocus: Boolean by mutableStateOf(false)
@@ -93,11 +95,15 @@ class EntryListState(
         jumpToEntry(index)
     }
 
-    override fun calculateResult(): List<IndexedValue<Entry>> = filterState.filter.filter(entries, labelerConf)
+    override fun calculateResult(): Pair<Boolean, List<IndexedValue<Entry>>> =
+        filterState.filter.isEmpty().not() to filterState.filter.filter(entries, labelerConf)
 
     override fun updateProject(project: Project) {
         entries = project.currentModule.entries.withIndex().toList()
         currentIndex = project.currentModule.currentIndex
+        if (filterState.filter.star != null || filterState.filter.done != null) {
+            isFilterExpanded = true
+        }
         updateSearch()
     }
 
@@ -166,8 +172,7 @@ fun EntryList(
                 if (pinned) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         val countText = "${state.searchResult.size} / ${state.entries.size}"
-                        val isFiltered = state.searchResult.size != state.entries.size
-                        val alpha = if (isFiltered) 0.8f else 0.4f
+                        val alpha = if (state.isFiltered) 0.8f else 0.4f
                         val color = MaterialTheme.colors.onSurface.copy(alpha)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(

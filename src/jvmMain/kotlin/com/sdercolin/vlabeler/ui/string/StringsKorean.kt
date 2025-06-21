@@ -35,7 +35,7 @@ fun Strings.ko(): String? = when (this) {
     MenuEditToolsPlayback -> "재생"
     MenuEditRenameEntry -> "[이름 변경] 현재 엔트리 ..."
     MenuEditDuplicateEntry -> "[복제] 현재 엔트리..."
-    MenuEditRemoveEntry -> "[제거] 현재 엔트리"
+    MenuEditRemoveEntry -> "[제거] 현재 엔트리..."
     MenuEditMoveEntry -> "[옮기기] 현재 엔트리..."
     MenuEditToggleDone -> "[\"완료\" 표시] 현재 엔트리"
     MenuEditToggleStar -> "[\"중요\" 표시] 현재 엔트리"
@@ -201,9 +201,9 @@ fun Strings.ko(): String? = when (this) {
     EditEntryExtraDialogDescription -> "현재 엔트리의 추가 정보 편집"
     EditModuleExtraDialogDescription -> "현재 하위 프로젝트의 추가 정보 편집"
     MoveEntryDialogDescription -> "엔트리 \"%1\$s\"의 새로운 인덱스 입력 (%2\$d ~ %3\$d)"
-    AskIfRemoveEntryDialogDescription -> "현재 엔트리 삭제 중..."
+    AskIfRemoveEntryDialogDescription -> "엔트리 \"%s\" 삭제 중..."
     AskIfRemoveEntryLastDialogDescription ->
-        "현재 엔트리 삭제 중...\n" +
+        "엔트리 \"%s\" 삭제 중...\n" +
             "이 엔트리는 현재 샘플 파일에서 유일하게 참조되고 있던 엔트리에요.\n" +
             "나중에 이 샘플에 엔트리를 추가하려면, `외형` -> `샘플 목록`을 눌러 주세요."
     AskIfLoadAutoSavedProjectDialogDescription ->
@@ -774,5 +774,17 @@ fun Strings.ko(): String? = when (this) {
     ReloadLabelDialogInheritNotes -> "노트들 상속하기"
     ReloadLabelDialogInheritNotesDescription ->
         "활성화 시, 해당하는 모든 엔트리 쌍에 대해 이전 엔트리의 노트들이 새 엔트리로 복사됩니다."
+    EditorContextActionOpenRenameEntryDialog -> "항목 이름 변경..."
+    EditorContextActionOpenDuplicateEntryDialog -> "항목 복제..."
+    EditorContextActionOpenRemoveEntryDialog -> "항목 제거..."
+    EditorContextActionOpenMoveEntryDialog -> "항목 이동 대상 선택..."
+    EditorContextActionCopyEntryName -> "항목 이름을 클립보드에 복사"
+    EditorContextActionCopySampleName -> "샘플 이름을 클립보드에 복사"
+    EditorContextActionFilterBySampleName -> "샘플 이름으로 필터"
+    EditorContextActionFilterByTag -> "태그 값으로 필터"
+    EditorContextActionFilterStarred -> "즐겨찾기된 항목만 필터"
+    EditorContextActionFilterUnstarred -> "즐겨찾기되지 않은 항목만 필터"
+    EditorContextActionFilterDone -> "완료된 항목만 필터"
+    EditorContextActionFilterUndone -> "미완료 항목만 필터"
     else -> null
 }

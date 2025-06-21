@@ -123,12 +123,17 @@ data class Project(
 
     fun updateEntryFilter(entryFilter: EntryFilter?): Project {
         val modules = modules.map {
+            val filteredIndexes = entryFilter?.getFilteredIndexes(
+                entries = it.entries,
+                labelerConf = labelerConf,
+            ) ?: it.entries.indices.toList()
             it.copy(
-                filteredEntryIndexes =
-                entryFilter?.getFilteredIndexes(
-                    entries = it.entries,
-                    labelerConf = labelerConf,
-                ) ?: it.entries.indices.toList(),
+                filteredEntryIndexes = filteredIndexes,
+                currentIndex = if (filteredIndexes.contains(it.currentIndex)) {
+                    it.currentIndex
+                } else {
+                    filteredIndexes.firstOrNull() ?: it.currentIndex
+                },
             )
         }
         return copy(modules = modules, entryFilter = entryFilter)

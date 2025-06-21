@@ -33,7 +33,7 @@ fun Strings.en(): String = when (this) {
     MenuEditToolsPlayback -> "Playback"
     MenuEditRenameEntry -> "Rename Current Entry..."
     MenuEditDuplicateEntry -> "Duplicate Current Entry..."
-    MenuEditRemoveEntry -> "Remove Current Entry"
+    MenuEditRemoveEntry -> "Remove Current Entry..."
     MenuEditMoveEntry -> "Move Current Entry to..."
     MenuEditToggleDone -> "Toggle Done for Current Entry"
     MenuEditToggleStar -> "Toggle Starred for Current Entry"
@@ -200,9 +200,9 @@ fun Strings.en(): String = when (this) {
     EditEntryExtraDialogDescription -> "Edit extra information of current entry"
     EditModuleExtraDialogDescription -> "Edit extra information of current subproject"
     MoveEntryDialogDescription -> "Input new index for entry \"%1\$s\" (%2\$d ~ %3\$d)"
-    AskIfRemoveEntryDialogDescription -> "Removing current entry..."
+    AskIfRemoveEntryDialogDescription -> "Removing entry \"%s\"..."
     AskIfRemoveEntryLastDialogDescription ->
-        "Removing current entry...\n" +
+        "Removing entry \"%s\"...\n" +
             "This entry is the only one that has reference of the current sample file.\n" +
             "If you need to add an entry on it later, please see menu `View` -> `Sample List`."
     AskIfLoadAutoSavedProjectDialogDescription ->
@@ -797,4 +797,16 @@ fun Strings.en(): String = when (this) {
     ReloadLabelDialogInheritNotes -> "Inherit notes"
     ReloadLabelDialogInheritNotesDescription ->
         "If enabled, the notes on old entries will be copied to the new entries for all matched entry pairs."
+    EditorContextActionOpenRenameEntryDialog -> "Rename Entry..."
+    EditorContextActionOpenDuplicateEntryDialog -> "Duplicate Entry..."
+    EditorContextActionOpenRemoveEntryDialog -> "Remove Entry..."
+    EditorContextActionOpenMoveEntryDialog -> "Move Entry to..."
+    EditorContextActionCopyEntryName -> "Copy Entry Name to Clipboard"
+    EditorContextActionCopySampleName -> "Copy Sample Name to Clipboard"
+    EditorContextActionFilterBySampleName -> "Filter by Sample Name"
+    EditorContextActionFilterByTag -> "Filter by Tag"
+    EditorContextActionFilterStarred -> "Filter Starred Entries"
+    EditorContextActionFilterUnstarred -> "Filter Unstarred Entries"
+    EditorContextActionFilterDone -> "Filter Done Entries"
+    EditorContextActionFilterUndone -> "Filter Undone Entries"
 }

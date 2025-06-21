@@ -13,10 +13,12 @@ import com.sdercolin.vlabeler.env.KeyboardState
 import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.io.getPropertyValue
 import com.sdercolin.vlabeler.model.AppConf
+import com.sdercolin.vlabeler.model.EntrySelector
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.SampleInfo
 import com.sdercolin.vlabeler.model.action.KeyAction
 import com.sdercolin.vlabeler.model.action.MouseScrollAction
+import com.sdercolin.vlabeler.model.filter.EntryFilter
 import com.sdercolin.vlabeler.repository.SampleInfoRepository
 import com.sdercolin.vlabeler.ui.AppState
 import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
@@ -24,6 +26,7 @@ import com.sdercolin.vlabeler.ui.editor.labeler.CanvasParams
 import com.sdercolin.vlabeler.ui.editor.labeler.CanvasState
 import com.sdercolin.vlabeler.ui.editor.labeler.ScreenRangeHelper
 import com.sdercolin.vlabeler.ui.string.*
+import com.sdercolin.vlabeler.util.Clipboard
 import com.sdercolin.vlabeler.util.FloatRange
 import com.sdercolin.vlabeler.util.JavaScript
 import com.sdercolin.vlabeler.util.getDefaultNewEntryName
@@ -490,6 +493,86 @@ class EditorState(
         val propertyIndex = project.labelerConf.properties.indexOf(property)
         appState.openSetPropertyValueDialog(propertyIndex, currentValue.toFloat())
         return true
+    }
+
+    fun consumeEditorContextAction(action: EditorContextAction) = when (action) {
+        is EditorContextAction.CopyEntryName -> {
+            Clipboard.copyToClipboard(action.entryName)
+        }
+        is EditorContextAction.OpenDuplicateEntryDialog -> {
+            openEditEntryNameDialog(action.entryIndex, InputEntryNameDialogPurpose.Duplicate)
+        }
+        is EditorContextAction.OpenMoveEntryDialog -> {
+            appState.openMoveEntryDialog(
+                index = action.entryIndex,
+                appConf = appState.appConf,
+            )
+        }
+        is EditorContextAction.OpenRemoveEntryDialog -> {
+            project.currentModule.entries.getOrNull(action.entryIndex)?.let {
+                appState.confirmIfRemoveEntry(
+                    index = action.entryIndex,
+                    name = it.name,
+                    isLastEntry = appState.isOnlyEntry(),
+                )
+            }
+        }
+        is EditorContextAction.OpenRenameEntryDialog -> {
+            openEditEntryNameDialog(action.entryIndex, InputEntryNameDialogPurpose.Rename)
+        }
+        is EditorContextAction.CopySampleName -> {
+            Clipboard.copyToClipboard(action.sampleName)
+        }
+        is EditorContextAction.FilterBySampleName -> {
+            appState.updateEntryFilter {
+                EntryFilter(
+                    advanced = EntrySelector(
+                        filters = listOf(
+                            EntrySelector.TextFilterItem(
+                                subject = EntrySelector.TEXT_ITEM_SUBJECT_SAMPLE_NAME,
+                                matchType = EntrySelector.TextMatchType.Equals,
+                                matcherText = action.sampleName,
+                            ),
+                        ),
+                    ),
+                )
+            }
+        }
+        is EditorContextAction.FilterByTag -> {
+            appState.updateEntryFilter {
+                EntryFilter(
+                    advanced = EntrySelector(
+                        filters = listOf(
+                            EntrySelector.TextFilterItem(
+                                subject = EntrySelector.TEXT_ITEM_SUBJECT_TAG_NAME,
+                                matchType = EntrySelector.TextMatchType.Equals,
+                                matcherText = action.tag,
+                            ),
+                        ),
+                    ),
+                )
+            }
+        }
+        is EditorContextAction.FilterStarred -> {
+            appState.updateEntryFilter {
+                EntryFilter(star = true)
+            }
+        }
+        is EditorContextAction.FilterUnstarred -> {
+            appState.updateEntryFilter {
+                EntryFilter(star = false)
+            }
+        }
+        is EditorContextAction.FilterDone -> {
+            appState.updateEntryFilter {
+                EntryFilter(done = true)
+            }
+        }
+        is EditorContextAction.FilterUndone -> {
+            appState.updateEntryFilter {
+                EntryFilter(done = false)
+            }
+        }
     }
 
     fun clear() {

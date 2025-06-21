@@ -48,6 +48,7 @@ interface NavigatorListState<T : Any> {
 
     val currentIndex: Int
     var selectedIndex: Int?
+    var isFiltered: Boolean
     var searchResult: List<IndexedValue<T>>
     var hasFocus: Boolean
 
@@ -55,15 +56,16 @@ interface NavigatorListState<T : Any> {
 
     fun submit(index: Int)
     fun updateProject(project: Project)
-    fun calculateResult(): List<IndexedValue<T>>
+    fun calculateResult(): Pair<Boolean, List<IndexedValue<T>>>
     fun updateSearch() {
-        val newResults = calculateResult()
+        val (active, newResults) = calculateResult()
         searchResult = newResults
         selectedIndex = if (hasFocus) {
             if (newResults.isNotEmpty()) 0 else null
         } else {
             newResults.indexOfFirst { it.index == currentIndex }.takeIf { it >= 0 }
         }
+        isFiltered = active
     }
 
     fun submitCurrent() {

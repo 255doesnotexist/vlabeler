@@ -1,5 +1,6 @@
 package com.sdercolin.vlabeler.ui.editor.labeler
 
+import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -63,7 +64,7 @@ import com.sdercolin.vlabeler.ui.common.DoneIcon
 import com.sdercolin.vlabeler.ui.common.ExtraIcon
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.StarIcon
-import com.sdercolin.vlabeler.ui.dialog.InputEntryNameDialogPurpose
+import com.sdercolin.vlabeler.ui.editor.EditorContextAction
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
 import com.sdercolin.vlabeler.ui.editor.RenderStatusLabel
@@ -86,9 +87,6 @@ fun Labeler(
     appState: AppState,
 ) {
     val project = editorState.project
-    val openEditEntryNameDialog = remember(editorState, project) {
-        { editorState.openEditEntryNameDialog(project.currentModule.currentIndex, InputEntryNameDialogPurpose.Rename) }
-    }
     val horizontalScrollState = rememberScrollState(0)
 
     LaunchedEffect(editorState) {
@@ -114,6 +112,7 @@ fun Labeler(
         }
         EntryTitleBar(
             appConf = appState.appConf,
+            index = editorState.project.currentModule.currentIndex,
             title = editorState.entryTitle,
             subTitle = editorState.getEntrySubTitle(),
             multiple = editorState.editedEntries.size > 1,
@@ -128,7 +127,9 @@ fun Labeler(
             tagOptions = editorState.tagOptions,
             entryHasExtra = appState.canEditCurrentEntryExtra,
             editEntryExtra = { editorState.editEntryExtra(editorState.project.currentModule.currentIndex) },
-            openEditEntryNameDialog = openEditEntryNameDialog,
+            handleContextAction = {
+                editorState.consumeEditorContextAction(it)
+            },
         )
         if (appState.isTimescaleBarDisplayed) {
             TimescaleBar(
@@ -252,6 +253,7 @@ private fun ModuleSelectorBar(
 @Composable
 private fun EntryTitleBar(
     appConf: AppConf,
+    index: Int,
     title: String,
     subTitle: String,
     multiple: Boolean,
@@ -266,7 +268,7 @@ private fun EntryTitleBar(
     tagOptions: List<String>,
     entryHasExtra: Boolean,
     editEntryExtra: () -> Unit,
-    openEditEntryNameDialog: () -> Unit,
+    handleContextAction: (EditorContextAction) -> Unit,
 ) {
     Surface {
         Box(
@@ -277,22 +279,58 @@ private fun EntryTitleBar(
         ) {
             Row(modifier = Modifier.fillMaxSize().align(Alignment.CenterStart)) {
                 Row(Modifier.weight(1f).align(Alignment.CenterVertically)) {
-                    Text(
-                        modifier = Modifier.alignByBaseline()
-                            .clickable(enabled = !multiple) { openEditEntryNameDialog() },
-                        text = title,
-                        style = MaterialTheme.typography.h3,
-                        maxLines = 1,
-                        softWrap = false,
-                    )
+                    val entryNameContextActions = remember(index, title, multiple) {
+                        listOfNotNull(
+                            EditorContextAction.CopyEntryName(title),
+                            EditorContextAction.OpenRenameEntryDialog(index),
+                            EditorContextAction.OpenDuplicateEntryDialog(index),
+                            EditorContextAction.OpenRemoveEntryDialog(index),
+                            EditorContextAction.OpenMoveEntryDialog(index).takeUnless { multiple },
+                        )
+                    }
+                    val entryNameContextMenuItems = entryNameContextActions.map {
+                        it.toContextMenuItem { action ->
+                            handleContextAction(action)
+                        }
+                    }
+                    ContextMenuArea(
+                        items = { entryNameContextMenuItems },
+                    ) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Bottom)
+                                .clickable {
+                                    handleContextAction(EditorContextAction.OpenRenameEntryDialog(index))
+                                },
+                            text = title,
+                            style = MaterialTheme.typography.h3,
+                            maxLines = 1,
+                            softWrap = false,
+                        )
+                    }
                     Spacer(Modifier.width(10.dp))
-                    Text(
-                        modifier = Modifier.alignByBaseline(),
-                        text = "（$subTitle）",
-                        style = MaterialTheme.typography.h5,
-                        maxLines = 1,
-                        softWrap = false,
-                    )
+                    val sampleNameContextActions = remember(subTitle, multiple) {
+                        listOfNotNull(
+                            EditorContextAction.CopySampleName(subTitle).takeUnless { multiple },
+                            EditorContextAction.FilterBySampleName(subTitle).takeUnless { multiple },
+                        )
+                    }
+                    val sampleNameContextMenuItems = sampleNameContextActions.map {
+                        it.toContextMenuItem { action ->
+                            handleContextAction(action)
+                        }
+                    }
+                    Box(modifier = Modifier.align(Alignment.Bottom).padding(vertical = 8.dp)) {
+                        ContextMenuArea(
+                            items = { sampleNameContextMenuItems },
+                        ) {
+                            Text(
+                                text = "（$subTitle）",
+                                style = MaterialTheme.typography.h5,
+                                maxLines = 1,
+                                softWrap = false,
+                            )
+                        }
+                    }
                 }
                 if (appConf.editor.let { it.showDone || it.showStar || it.showTag || it.showExtra }) {
                     Spacer(Modifier.width(20.dp))
@@ -303,28 +341,72 @@ private fun EntryTitleBar(
                         verticalAlignment = Alignment.Bottom,
                     ) {
                         if (appConf.editor.showTag) {
-                            TagRegion(
-                                tag = tag,
-                                editTag = editTag,
-                                tagOptions = tagOptions,
-                                isEditing = isEditingTag,
-                                setEditing = setEditingTag,
-                            )
+                            val tagContextActions = remember(tag) {
+                                listOfNotNull(
+                                    EditorContextAction.FilterByTag(tag),
+                                )
+                            }
+                            val tagContextMenuItems = tagContextActions.map {
+                                it.toContextMenuItem { action ->
+                                    handleContextAction(action)
+                                }
+                            }
+                            ContextMenuArea(
+                                items = { tagContextMenuItems },
+                            ) {
+                                TagRegion(
+                                    tag = tag,
+                                    editTag = editTag,
+                                    tagOptions = tagOptions,
+                                    isEditing = isEditingTag,
+                                    setEditing = setEditingTag,
+                                )
+                            }
                         }
                         if (appConf.editor.showDone) {
-                            FreeSizedIconButton(
-                                onClick = toggleDone,
-                                modifier = Modifier.padding(8.dp),
+                            val doneContextActions = remember {
+                                listOfNotNull(
+                                    EditorContextAction.FilterDone(),
+                                    EditorContextAction.FilterUndone(),
+                                )
+                            }
+                            val doneContextMenuItems = doneContextActions.map {
+                                it.toContextMenuItem { action ->
+                                    handleContextAction(action)
+                                }
+                            }
+                            ContextMenuArea(
+                                items = { doneContextMenuItems },
                             ) {
-                                DoneIcon(done)
+                                FreeSizedIconButton(
+                                    onClick = toggleDone,
+                                    modifier = Modifier.padding(8.dp),
+                                ) {
+                                    DoneIcon(done)
+                                }
                             }
                         }
                         if (appConf.editor.showStar) {
-                            FreeSizedIconButton(
-                                onClick = toggleStar,
-                                modifier = Modifier.padding(8.dp),
+                            val starContextActions = remember {
+                                listOfNotNull(
+                                    EditorContextAction.FilterStarred(),
+                                    EditorContextAction.FilterUnstarred(),
+                                )
+                            }
+                            val starContextMenuItems = starContextActions.map {
+                                it.toContextMenuItem { action ->
+                                    handleContextAction(action)
+                                }
+                            }
+                            ContextMenuArea(
+                                items = { starContextMenuItems },
                             ) {
-                                StarIcon(star)
+                                FreeSizedIconButton(
+                                    onClick = toggleStar,
+                                    modifier = Modifier.padding(8.dp),
+                                ) {
+                                    StarIcon(star)
+                                }
                             }
                         }
                         if (appConf.editor.showExtra && entryHasExtra) {

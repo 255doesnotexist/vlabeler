@@ -640,6 +640,18 @@ enum class Strings {
     ReloadLabelDialogNoDiff,
     ReloadLabelDialogInheritNotes,
     ReloadLabelDialogInheritNotesDescription,
+    EditorContextActionOpenRenameEntryDialog,
+    EditorContextActionOpenDuplicateEntryDialog,
+    EditorContextActionOpenRemoveEntryDialog,
+    EditorContextActionOpenMoveEntryDialog,
+    EditorContextActionCopyEntryName,
+    EditorContextActionCopySampleName,
+    EditorContextActionFilterBySampleName,
+    EditorContextActionFilterByTag,
+    EditorContextActionFilterStarred,
+    EditorContextActionFilterUnstarred,
+    EditorContextActionFilterDone,
+    EditorContextActionFilterUndone,
     ;
 
     fun get(language: Language): String = when (language) {

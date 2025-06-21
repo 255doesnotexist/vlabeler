@@ -36,7 +36,9 @@ class ModuleListState(
     override val labelerConf: LabelerConf = project.labelerConf
 
     var searchText: String by mutableStateOf("")
-    override var searchResult: List<IndexedValue<Module>> by mutableStateOf(calculateResult())
+    private val initialResult = calculateResult()
+    override var isFiltered: Boolean by mutableStateOf(initialResult.first)
+    override var searchResult: List<IndexedValue<Module>> by mutableStateOf(initialResult.second)
     override var selectedIndex: Int? by mutableStateOf(null)
 
     override var hasFocus: Boolean by mutableStateOf(false)
@@ -45,8 +47,8 @@ class ModuleListState(
         jumpToModule(index)
     }
 
-    override fun calculateResult(): List<IndexedValue<Module>> =
-        modules.filter { it.value.name.contains(searchText, true) }
+    override fun calculateResult(): Pair<Boolean, List<IndexedValue<Module>>> =
+        searchText.isNotEmpty() to modules.filter { it.value.name.contains(searchText, true) }
 
     override fun updateProject(project: Project) {
         modules = project.modules.withIndex().toList()

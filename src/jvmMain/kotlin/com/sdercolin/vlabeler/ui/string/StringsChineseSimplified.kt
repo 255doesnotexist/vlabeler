@@ -35,7 +35,7 @@ fun Strings.zhHans(): String? = when (this) {
     MenuEditToolsPlayback -> "播放"
     MenuEditRenameEntry -> "编辑当前条目名..."
     MenuEditDuplicateEntry -> "创建当前条目的副本..."
-    MenuEditRemoveEntry -> "删除当前条目"
+    MenuEditRemoveEntry -> "删除当前条目..."
     MenuEditMoveEntry -> "移动当前条目至..."
     MenuEditToggleDone -> "对当前条目切换完成状态"
     MenuEditToggleStar -> "对当前条目切换星标状态"
@@ -192,9 +192,9 @@ fun Strings.zhHans(): String? = when (this) {
     EditEntryExtraDialogDescription -> "编辑当前条目的额外信息"
     EditModuleExtraDialogDescription -> "编辑当前子项目的额外信息"
     MoveEntryDialogDescription -> "请输入条目 \"%1\$s\" 的新索引（%2\$d ~ %3\$d）"
-    AskIfRemoveEntryDialogDescription -> "将要删除当前条目..."
+    AskIfRemoveEntryDialogDescription -> "将要删除条目 \"%s\"..."
     AskIfRemoveEntryLastDialogDescription ->
-        "将要删除当前条目...\n" +
+        "将要删除条目\"%s\"...\n" +
             "该条目是当前采样文件关联到的唯一条目。如果您想重新关联这个采样文件，请前往菜单 `视图` -> `采样列表`"
     AskIfLoadAutoSavedProjectDialogDescription -> "发现自动保存的项目文件。是否读取？该文件将会在您打开或创建别的项目时被删除。"
     AskIfRedirectSampleDirectoryDialogDescription ->
@@ -707,5 +707,17 @@ fun Strings.zhHans(): String? = when (this) {
     ReloadLabelDialogNoDiff -> "没有发现差异。"
     ReloadLabelDialogInheritNotes -> "继承备注"
     ReloadLabelDialogInheritNotesDescription -> "如果启用，对于所有匹配的条目对，旧条目的备注将被复制到对应的新条目中。"
+    EditorContextActionOpenRenameEntryDialog -> "编辑条目名..."
+    EditorContextActionOpenDuplicateEntryDialog -> "创建条目的副本..."
+    EditorContextActionOpenRemoveEntryDialog -> "删除条目..."
+    EditorContextActionOpenMoveEntryDialog -> "移动条目..."
+    EditorContextActionCopyEntryName -> "复制条目名到剪贴板"
+    EditorContextActionCopySampleName -> "复制采样名到剪贴板"
+    EditorContextActionFilterBySampleName -> "以此采样名筛选条目"
+    EditorContextActionFilterByTag -> "以此标签筛选条目"
+    EditorContextActionFilterStarred -> "筛选星标条目"
+    EditorContextActionFilterUnstarred -> "筛选未星标条目"
+    EditorContextActionFilterDone -> "筛选已完成条目"
+    EditorContextActionFilterUndone -> "筛选未完成条目"
     else -> null
 }

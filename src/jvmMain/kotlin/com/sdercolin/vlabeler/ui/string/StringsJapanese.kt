@@ -197,9 +197,9 @@ fun Strings.ja(): String? = when (this) {
     EditEntryExtraDialogDescription -> "このエントリの追加情報の編集"
     EditModuleExtraDialogDescription -> "このサブプロジェクトの追加情報の編集"
     MoveEntryDialogDescription -> "エントリ「%1\$s」の新しいインデックスを入力してください (%2\$d ~ %3\$d)"
-    AskIfRemoveEntryDialogDescription -> "このエントリを削除します。"
+    AskIfRemoveEntryDialogDescription -> "エントリ「%s」を削除します。"
     AskIfRemoveEntryLastDialogDescription ->
-        "このエントリを削除します。\n" +
+        "エントリ「%s」を削除します。\n" +
             "このエントリはサンプルに紐付けられている唯一のエントリのため、削除すると、サンプルはプロジェクトから消えますが、" +
             "メニュー「表示」->「サンプルリスト」で確認・再度追加できます。"
     AskIfLoadAutoSavedProjectDialogDescription ->
@@ -754,5 +754,17 @@ fun Strings.ja(): String? = when (this) {
     ReloadLabelDialogInheritNotesDescription ->
         "有効にすると、古いエントリと新しいエントリのすべての対応するエントリペアについて、" +
             "古いエントリの備考が新しいエントリにコピーされます。"
+    EditorContextActionOpenRenameEntryDialog -> "エントリの名前を編集..."
+    EditorContextActionOpenDuplicateEntryDialog -> "エントリを複製..."
+    EditorContextActionOpenRemoveEntryDialog -> "エントリを削除..."
+    EditorContextActionOpenMoveEntryDialog -> "エントリを移動..."
+    EditorContextActionCopyEntryName -> "エントリ名をクリップボードにコピー"
+    EditorContextActionCopySampleName -> "サンプル名をクリップボードにコピー"
+    EditorContextActionFilterBySampleName -> "サンプル名でフィルター"
+    EditorContextActionFilterByTag -> "タグでフィルター"
+    EditorContextActionFilterStarred -> "スターマークのあるエントリをフィルター"
+    EditorContextActionFilterUnstarred -> "スターマークのないエントリをフィルター"
+    EditorContextActionFilterDone -> "完了したエントリをフィルター"
+    EditorContextActionFilterUndone -> "未完了のエントリをフィルター"
     else -> null
 }

@@ -253,8 +253,7 @@ data class Module(
         return copy(entries = entries, currentIndex = index)
     }
 
-    fun removeCurrentEntry(labelerConf: LabelerConf): Module {
-        val index = currentIndex
+    fun removeEntry(index: Int, labelerConf: LabelerConf): Module {
         val entries = entries.toMutableList()
         val removed = requireNotNull(entries.removeAt(index))
         val newIndex = (index - 1).coerceAtLeast(0)
