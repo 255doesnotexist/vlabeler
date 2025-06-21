@@ -1,6 +1,5 @@
 package com.sdercolin.vlabeler.ui.editor.labeler
 
-import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -64,6 +63,7 @@ import com.sdercolin.vlabeler.ui.common.DoneIcon
 import com.sdercolin.vlabeler.ui.common.ExtraIcon
 import com.sdercolin.vlabeler.ui.common.FreeSizedIconButton
 import com.sdercolin.vlabeler.ui.common.StarIcon
+import com.sdercolin.vlabeler.ui.common.WithContextMenu
 import com.sdercolin.vlabeler.ui.editor.EditorContextAction
 import com.sdercolin.vlabeler.ui.editor.EditorState
 import com.sdercolin.vlabeler.ui.editor.PropertyView
@@ -279,22 +279,19 @@ private fun EntryTitleBar(
         ) {
             Row(modifier = Modifier.fillMaxSize().align(Alignment.CenterStart)) {
                 Row(Modifier.weight(1f).align(Alignment.CenterVertically)) {
-                    val entryNameContextActions = remember(index, title, multiple) {
-                        listOfNotNull(
-                            EditorContextAction.CopyEntryName(title),
-                            EditorContextAction.OpenRenameEntryDialog(index),
-                            EditorContextAction.OpenDuplicateEntryDialog(index),
-                            EditorContextAction.OpenRemoveEntryDialog(index),
-                            EditorContextAction.OpenMoveEntryDialog(index).takeUnless { multiple },
-                        )
-                    }
-                    val entryNameContextMenuItems = entryNameContextActions.map {
-                        it.toContextMenuItem { action ->
-                            handleContextAction(action)
-                        }
-                    }
-                    ContextMenuArea(
-                        items = { entryNameContextMenuItems },
+                    WithContextMenu(
+                        items = {
+                            remember(index, title, multiple) {
+                                listOfNotNull(
+                                    EditorContextAction.CopyEntryName(title),
+                                    EditorContextAction.OpenRenameEntryDialog(index),
+                                    EditorContextAction.OpenDuplicateEntryDialog(index),
+                                    EditorContextAction.OpenRemoveEntryDialog(index),
+                                    EditorContextAction.OpenMoveEntryDialog(index).takeUnless { multiple },
+                                )
+                            }
+                        },
+                        consumer = handleContextAction,
                     ) {
                         Text(
                             modifier = Modifier.align(Alignment.Bottom)
@@ -308,20 +305,17 @@ private fun EntryTitleBar(
                         )
                     }
                     Spacer(Modifier.width(10.dp))
-                    val sampleNameContextActions = remember(subTitle, multiple) {
-                        listOfNotNull(
-                            EditorContextAction.CopySampleName(subTitle).takeUnless { multiple },
-                            EditorContextAction.FilterBySampleName(subTitle).takeUnless { multiple },
-                        )
-                    }
-                    val sampleNameContextMenuItems = sampleNameContextActions.map {
-                        it.toContextMenuItem { action ->
-                            handleContextAction(action)
-                        }
-                    }
                     Box(modifier = Modifier.align(Alignment.Bottom).padding(vertical = 8.dp)) {
-                        ContextMenuArea(
-                            items = { sampleNameContextMenuItems },
+                        WithContextMenu(
+                            items = {
+                                remember(subTitle, multiple) {
+                                    listOfNotNull(
+                                        EditorContextAction.CopySampleName(subTitle).takeUnless { multiple },
+                                        EditorContextAction.FilterBySampleName(subTitle).takeUnless { multiple },
+                                    )
+                                }
+                            },
+                            consumer = handleContextAction,
                         ) {
                             Text(
                                 text = "（$subTitle）",
@@ -341,18 +335,15 @@ private fun EntryTitleBar(
                         verticalAlignment = Alignment.Bottom,
                     ) {
                         if (appConf.editor.showTag) {
-                            val tagContextActions = remember(tag) {
-                                listOfNotNull(
-                                    EditorContextAction.FilterByTag(tag),
-                                )
-                            }
-                            val tagContextMenuItems = tagContextActions.map {
-                                it.toContextMenuItem { action ->
-                                    handleContextAction(action)
-                                }
-                            }
-                            ContextMenuArea(
-                                items = { tagContextMenuItems },
+                            WithContextMenu(
+                                items = {
+                                    remember(tag) {
+                                        listOfNotNull(
+                                            EditorContextAction.FilterByTag(tag),
+                                        )
+                                    }
+                                },
+                                consumer = handleContextAction,
                             ) {
                                 TagRegion(
                                     tag = tag,
@@ -364,19 +355,16 @@ private fun EntryTitleBar(
                             }
                         }
                         if (appConf.editor.showDone) {
-                            val doneContextActions = remember {
-                                listOfNotNull(
-                                    EditorContextAction.FilterDone(),
-                                    EditorContextAction.FilterUndone(),
-                                )
-                            }
-                            val doneContextMenuItems = doneContextActions.map {
-                                it.toContextMenuItem { action ->
-                                    handleContextAction(action)
-                                }
-                            }
-                            ContextMenuArea(
-                                items = { doneContextMenuItems },
+                            WithContextMenu(
+                                items = {
+                                    remember {
+                                        listOf(
+                                            EditorContextAction.FilterDone(),
+                                            EditorContextAction.FilterUndone(),
+                                        )
+                                    }
+                                },
+                                consumer = handleContextAction,
                             ) {
                                 FreeSizedIconButton(
                                     onClick = toggleDone,
@@ -387,19 +375,16 @@ private fun EntryTitleBar(
                             }
                         }
                         if (appConf.editor.showStar) {
-                            val starContextActions = remember {
-                                listOfNotNull(
-                                    EditorContextAction.FilterStarred(),
-                                    EditorContextAction.FilterUnstarred(),
-                                )
-                            }
-                            val starContextMenuItems = starContextActions.map {
-                                it.toContextMenuItem { action ->
-                                    handleContextAction(action)
-                                }
-                            }
-                            ContextMenuArea(
-                                items = { starContextMenuItems },
+                            WithContextMenu(
+                                items = {
+                                    remember {
+                                        listOf(
+                                            EditorContextAction.FilterStarred(),
+                                            EditorContextAction.FilterUnstarred(),
+                                        )
+                                    }
+                                },
+                                consumer = handleContextAction,
                             ) {
                                 FreeSizedIconButton(
                                     onClick = toggleStar,
