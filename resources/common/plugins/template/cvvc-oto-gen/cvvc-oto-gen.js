@@ -361,8 +361,12 @@ function parseSample(sample) {
         pushOther(sample)
         return
     }
-
-    let rest = (getNameWithoutExtension(sample) + appendSuffix).slice(prefix.length)
+    let totalName = getNameWithoutExtension(sample)
+    let suffix = suffixes.find(suffix => totalName.endsWith(suffix))
+    if (!suffix) {
+        totalName += appendSuffix
+    }
+    let rest = totalName.slice(prefix.length)
     let index = 0
     let lastVowel = ""
 
