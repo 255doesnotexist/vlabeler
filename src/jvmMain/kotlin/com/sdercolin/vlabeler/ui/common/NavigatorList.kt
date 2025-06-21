@@ -5,6 +5,9 @@ package com.sdercolin.vlabeler.ui.common
 import androidx.compose.foundation.ScrollbarAdapter
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -41,8 +44,9 @@ import com.sdercolin.vlabeler.env.isReleased
 import com.sdercolin.vlabeler.model.LabelerConf
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.ui.theme.LightGray
+import com.sdercolin.vlabeler.util.alpha
 import com.sdercolin.vlabeler.util.animateScrollToShowItem
-import com.sdercolin.vlabeler.util.runIf
+import com.sdercolin.vlabeler.util.runIfHave
 
 interface NavigatorListState<S : ContextMenuSubject<A>, A : ContextMenuAction<A>> {
 
@@ -116,12 +120,20 @@ fun <S : ContextMenuSubject<A>, A : ContextMenuAction<A>> ColumnScope.NavigatorL
         LazyColumn(state = scrollState) {
             itemsIndexed(state.searchResult) { index, item ->
                 WithContextMenu(items = { item.getContextMenuActions() }, consumer = contextMenuActionConsumer) {
+                    val hoverInteractionSource = remember { MutableInteractionSource() }
+                    val isHovered by hoverInteractionSource.collectIsHoveredAsState()
+                    val backgroundColor = when {
+                        index == state.selectedIndex -> MaterialTheme.colors.primaryVariant
+                        isHovered -> MaterialTheme.colors.primaryVariant.alpha(0.5f)
+                        else -> null
+                    }
                     Row(
                         modifier = Modifier.fillMaxWidth()
                             .height(30.dp)
-                            .runIf(index == state.selectedIndex) {
-                                background(color = MaterialTheme.colors.primaryVariant)
+                            .runIfHave(backgroundColor) {
+                                background(color = it)
                             }
+                            .hoverable(hoverInteractionSource)
                             .padding(end = 20.dp)
                             .onPointerEvent(PointerEventType.Press) {
                                 if (it.buttons.isPrimaryPressed.not() || it.buttons.isSecondaryPressed) {
