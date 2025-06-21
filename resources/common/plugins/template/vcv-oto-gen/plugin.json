@@ -124,7 +124,7 @@
                 "type": "string",
                 "name": "headSeparator",
                 "label": {
-                    "en": "Head Separator",
+                    "en": "Head separator",
                     "zh": "起始分隔符",
                     "ja": "先頭区切り文字",
                     "ko": "시작 구분자"
