@@ -417,7 +417,7 @@ data class AppConf(
             const val DEFAULT_SHOW_STAR = true
             const val DEFAULT_SHOW_TAG = true
             const val DEFAULT_SHOW_EXTRA = true
-            const val DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER = false
+            const val DEFAULT_HIGHLIGHT_CURRENT_ENTRY_BORDER = true
             const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_COLOR = View.DEFAULT_ACCENT_COLOR_VARIANT
             const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH = 4f
             const val DEFAULT_CURRENT_ENTRY_BORDER_HIGHLIGHT_WIDTH_MIN = 2f
