@@ -37,7 +37,7 @@ class ProjectSettingDialogState(
                 val rootDirectory = rootDirectory.trim().toFile()
                 rootDirectory.isDirectory && Files.isReadable(rootDirectory.toPath())
             } catch (e: Exception) {
-                Log.info("Invalid root directory: $rootDirectory", e)
+                Log.info("Invalid root directory: $rootDirectory by ${e.message}")
                 false
             }
         }
