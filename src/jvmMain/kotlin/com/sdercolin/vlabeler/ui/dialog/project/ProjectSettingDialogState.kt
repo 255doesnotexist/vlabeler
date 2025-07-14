@@ -3,6 +3,7 @@ package com.sdercolin.vlabeler.ui.dialog.project
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.sdercolin.vlabeler.env.Log
 import com.sdercolin.vlabeler.model.Project
 import com.sdercolin.vlabeler.model.injectLabelerParams
 import com.sdercolin.vlabeler.ui.AppState
@@ -32,8 +33,13 @@ class ProjectSettingDialogState(
 
     val isRootDirectoryValid: Boolean
         get() {
-            val rootDirectory = rootDirectory.toFile()
-            return rootDirectory.isDirectory && Files.isReadable(rootDirectory.toPath())
+            return try {
+                val rootDirectory = rootDirectory.trim().toFile()
+                rootDirectory.isDirectory && Files.isReadable(rootDirectory.toPath())
+            } catch (e: Exception) {
+                Log.info("Invalid root directory: $rootDirectory", e)
+                false
+            }
         }
 
     var cacheDirectory: String by mutableStateOf(project.cacheDirectory.absolutePath)
