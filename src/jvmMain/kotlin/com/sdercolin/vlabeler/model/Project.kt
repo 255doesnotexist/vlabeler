@@ -112,7 +112,9 @@ data class Project(
     fun updateModule(name: String, updater: Module.() -> Module): Project {
         val module = getModule(name)
         val index = modules.indexOf(module)
-        return copy(modules = modules.toMutableList().apply { this[index] = module.updater() })
+        return copy(
+            modules = modules.toMutableList().apply { this[index] = module.updater() },
+        ).applyCurrentEntryFilter()
     }
 
     fun updateCurrentModule(updater: Module.() -> Module): Project {
@@ -154,7 +156,10 @@ data class Project(
     ): Project {
         val mergedEntries = mergeEntryLists(entries, currentModule.entries, diff, configs)
         val newModule = currentModule.copy(entries = mergedEntries, currentIndex = 0)
-        return copy(modules = modules.map { if (it == currentModule) newModule else it }, entryFilter = null)
+        return copy(
+            modules = modules.map { if (it == currentModule) newModule else it },
+            entryFilter = null,
+        ).applyCurrentEntryFilter()
     }
 
     fun validate() = this.run {
