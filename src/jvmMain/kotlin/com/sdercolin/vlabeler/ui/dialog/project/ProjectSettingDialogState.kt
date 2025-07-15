@@ -53,9 +53,14 @@ class ProjectSettingDialogState(
 
     val isCacheDirectoryValid: Boolean
         get() {
-            val cacheDirectory = cacheDirectory.toFile()
-            val parent = cacheDirectory.parentFile ?: return false
-            return parent.isDirectory && cacheDirectory.isFile.not()
+            return try {
+                val cacheDirectory = cacheDirectory.toFile()
+                val parent = cacheDirectory.parentFile ?: return false
+                parent.isDirectory && cacheDirectory.isFile.not()
+            } catch (e: Exception) {
+                Log.info("Invalid cache directory: $cacheDirectory by ${e.message}")
+                false
+            }
         }
 
     val isOutputFileEditable: Boolean
@@ -74,8 +79,14 @@ class ProjectSettingDialogState(
 
     val isOutputFileValid: Boolean
         get() {
-            val outputFile = outputFile ?: return true
-            return outputFile.toFile().parentFile.isDirectory
+            return try {
+                val outputFile = outputFile ?: return true
+                val parent = outputFile.toFile().parentFile ?: return false
+                return parent.isDirectory
+            } catch (e: Exception) {
+                Log.info("Invalid output file: $outputFile by ${e.message}")
+                false
+            }
         }
 
     val canChangeAutoExport: Boolean
